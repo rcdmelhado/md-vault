@@ -289,7 +289,7 @@ cat > "$PAGES_DIR/index.html" << 'HTMLEOF'
                     link.textContent = file.name;
                     link.onclick = (e) => {
                         e.preventDefault();
-                        loadFile(file.path);
+                        loadFile(file.path, e.currentTarget);
                     };
                     li.appendChild(link);
                     list.appendChild(li);
@@ -299,7 +299,7 @@ cat > "$PAGES_DIR/index.html" << 'HTMLEOF'
             }
         }
 
-        async function loadFile(path) {
+        async function loadFile(path, linkEl) {
             try {
                 const url = window.location.origin + baseUrl + '/content/' + path;
                 console.log('Carregando arquivo:', url);
@@ -310,7 +310,7 @@ cat > "$PAGES_DIR/index.html" << 'HTMLEOF'
                 document.getElementById('content').innerHTML = DOMPurify.sanitize(html);
 
                 document.querySelectorAll('.file-item a').forEach(a => a.classList.remove('active'));
-                event.target.classList.add('active');
+                if (linkEl) linkEl.classList.add('active');
             } catch (error) {
                 console.error('Erro ao carregar arquivo:', error);
                 document.getElementById('content').innerHTML = '<div class="error">❌ Erro ao carregar arquivo</div>';
