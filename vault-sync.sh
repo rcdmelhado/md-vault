@@ -214,23 +214,59 @@ cat > "$PAGES_DIR/index.html" << 'HTMLEOF'
             background: #161b22;
             border-radius: 6px;
         }
+        #menu-toggle {
+            display: none;
+            position: fixed;
+            top: 12px;
+            left: 12px;
+            z-index: 20;
+            background: #161b22;
+            color: #c9d1d9;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 18px;
+            line-height: 1;
+            cursor: pointer;
+        }
+        #sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 14;
+        }
+        #sidebar-overlay.visible {
+            display: block;
+        }
         @media (max-width: 768px) {
-            .container {
-                flex-direction: column;
+            #menu-toggle {
+                display: block;
             }
             .sidebar {
-                width: 100%;
-                border-right: none;
-                border-bottom: 1px solid #30363d;
-                max-height: 200px;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 80%;
+                max-width: 300px;
+                height: 100vh;
+                border-right: 1px solid #30363d;
+                transform: translateX(-100%);
+                transition: transform 0.25s ease;
+                z-index: 15;
+            }
+            .sidebar.open {
+                transform: translateX(0);
             }
             .content {
-                padding: 20px;
+                padding: 60px 20px 20px 20px;
             }
         }
     </style>
 </head>
 <body>
+    <button id="menu-toggle" aria-label="Abrir menu" aria-expanded="false">☰</button>
+    <div id="sidebar-overlay"></div>
     <div class="container">
         <div class="sidebar">
             <div class="header">
@@ -254,6 +290,27 @@ cat > "$PAGES_DIR/index.html" << 'HTMLEOF'
         let files = {};
         let categories = {};
         let baseUrl = window.location.pathname.replace(/\/$/, '');
+
+        const menuToggle = document.getElementById('menu-toggle');
+        const sidebarEl = document.querySelector('.sidebar');
+        const sidebarOverlay = document.getElementById('sidebar-overlay');
+        const isMobile = () => window.matchMedia('(max-width: 768px)').matches;
+
+        function openSidebar() {
+            sidebarEl.classList.add('open');
+            sidebarOverlay.classList.add('visible');
+            menuToggle.setAttribute('aria-expanded', 'true');
+        }
+        function closeSidebar() {
+            sidebarEl.classList.remove('open');
+            sidebarOverlay.classList.remove('visible');
+            menuToggle.setAttribute('aria-expanded', 'false');
+        }
+        menuToggle.addEventListener('click', () => {
+            if (sidebarEl.classList.contains('open')) closeSidebar();
+            else openSidebar();
+        });
+        sidebarOverlay.addEventListener('click', closeSidebar);
 
         async function loadFileStructure() {
             try {
@@ -311,6 +368,7 @@ cat > "$PAGES_DIR/index.html" << 'HTMLEOF'
 
                 document.querySelectorAll('.file-item a').forEach(a => a.classList.remove('active'));
                 if (linkEl) linkEl.classList.add('active');
+                if (isMobile()) closeSidebar();
             } catch (error) {
                 console.error('Erro ao carregar arquivo:', error);
                 document.getElementById('content').innerHTML = '<div class="error">❌ Erro ao carregar arquivo</div>';
