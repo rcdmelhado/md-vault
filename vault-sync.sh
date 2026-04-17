@@ -48,7 +48,7 @@ echo -e "${YELLOW}🔨 Gerando site estático...${NC}"
 rm -rf "$PAGES_DIR"
 mkdir -p "$PAGES_DIR"
 
-# Cria index.html
+# Cria index.html com URLs absolutas
 cat > "$PAGES_DIR/index.html" << 'HTMLEOF'
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -208,6 +208,12 @@ cat > "$PAGES_DIR/index.html" << 'HTMLEOF'
             color: #8b949e;
             font-style: italic;
         }
+        .error {
+            color: #f85149;
+            padding: 20px;
+            background: #161b22;
+            border-radius: 6px;
+        }
         @media (max-width: 768px) {
             .container {
                 flex-direction: column;
@@ -231,12 +237,14 @@ cat > "$PAGES_DIR/index.html" << 'HTMLEOF'
                 <h1>MD Vault</h1>
                 <p>Ricardo Melhado</p>
             </div>
-            <div id="sidebar-content"></div>
+            <div id="sidebar-content">
+                <p style="color: #8b949e; font-size: 12px;">Carregando...</p>
+            </div>
         </div>
         <div class="content">
             <div id="content" class="markdown-content">
                 <div class="welcome">
-                    <p>👋 Seleciona um arquivo na barra lateral pra visualizar.</p>
+                    <p>👋 Carregando arquivos...</p>
                 </div>
             </div>
         </div>
@@ -245,16 +253,22 @@ cat > "$PAGES_DIR/index.html" << 'HTMLEOF'
     <script>
         let files = {};
         let categories = {};
+        let baseUrl = window.location.pathname.replace(/\/$/, '');
 
         async function loadFileStructure() {
             try {
-                const response = await fetch('files.json');
+                const url = window.location.origin + baseUrl + '/files.json';
+                console.log('Carregando:', url);
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('HTTP ' + response.status);
                 const data = await response.json();
+                console.log('Dados carregados:', data);
                 files = data.files;
                 categories = data.categories;
                 renderSidebar();
             } catch (error) {
                 console.error('Erro ao carregar estrutura:', error);
+                document.getElementById('sidebar-content').innerHTML = '<div class="error">❌ Erro ao carregar arquivos</div>';
             }
         }
 
@@ -287,16 +301,19 @@ cat > "$PAGES_DIR/index.html" << 'HTMLEOF'
 
         async function loadFile(path) {
             try {
-                const response = await fetch(`content/${path}`);
+                const url = window.location.origin + baseUrl + '/content/' + path;
+                console.log('Carregando arquivo:', url);
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('HTTP ' + response.status);
                 const content = await response.text();
                 const html = marked.parse(content);
                 document.getElementById('content').innerHTML = DOMPurify.sanitize(html);
 
-                // Marca como ativo
                 document.querySelectorAll('.file-item a').forEach(a => a.classList.remove('active'));
                 event.target.classList.add('active');
             } catch (error) {
                 console.error('Erro ao carregar arquivo:', error);
+                document.getElementById('content').innerHTML = '<div class="error">❌ Erro ao carregar arquivo</div>';
             }
         }
 
