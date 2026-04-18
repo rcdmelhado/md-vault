@@ -1,0 +1,76 @@
+{
+  "files": [
+    {
+      "name": "README",
+      "path": "README.md"
+    },
+    {
+      "name": "mac-vs-avell",
+      "path": "profissional/alianza/mac-vs-avell.md"
+    },
+    {
+      "name": "laptop-alianza",
+      "path": "profissional/alianza/laptop-alianza.md"
+    },
+    {
+      "name": "mochila-edc",
+      "path": "pessoal/mochila-edc.md"
+    },
+    {
+      "name": "pc-ricardo",
+      "path": "pessoal/hardware/pc-ricardo.md"
+    },
+    {
+      "name": "aquecedor",
+      "path": "pessoal/energia/aquecedor.md"
+    },
+    {
+      "name": "geladeira",
+      "path": "pessoal/energia/geladeira.md"
+    },
+    {
+      "name": "nobreak",
+      "path": "pessoal/energia/nobreak.md"
+    }
+  ],
+  "categories": {
+    "Pessoal": [
+      {
+        "name": "mochila-edc",
+        "path": "pessoal/mochila-edc.md"
+      },
+      {
+        "name": "pc-ricardo",
+        "path": "pessoal/hardware/pc-ricardo.md"
+      },
+      {
+        "name": "aquecedor",
+        "path": "pessoal/energia/aquecedor.md"
+      },
+      {
+        "name": "geladeira",
+        "path": "pessoal/energia/geladeira.md"
+      },
+      {
+        "name": "nobreak",
+        "path": "pessoal/energia/nobreak.md"
+      }
+    ],
+    "Profissional": [
+      {
+        "name": "mac-vs-avell",
+        "path": "profissional/alianza/mac-vs-avell.md"
+      },
+      {
+        "name": "laptop-alianza",
+        "path": "profissional/alianza/laptop-alianza.md"
+      }
+    ],
+    "Root": [
+      {
+        "name": "README",
+        "path": "README.md"
+      }
+    ]
+  }
+}
